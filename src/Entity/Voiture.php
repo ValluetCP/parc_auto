@@ -26,6 +26,9 @@ class Voiture
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'voitures')]
+    private ?Loueur $loueur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +78,18 @@ class Voiture
     public function setCreateAt(\DateTimeInterface $createAt): static
     {
         $this->createAt = $createAt;
+
+        return $this;
+    }
+
+    public function getLoueur(): ?Loueur
+    {
+        return $this->loueur;
+    }
+
+    public function setLoueur(?Loueur $loueur): static
+    {
+        $this->loueur = $loueur;
 
         return $this;
     }

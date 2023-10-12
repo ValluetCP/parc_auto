@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LoueurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,18 @@ class Loueur
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $adresse = null;
+
+    #[ORM\OneToMany(mappedBy: 'loueur', targetEntity: Voiture::class)]
+    private Collection $voitures;
+
+    #[ORM\ManyToMany(targetEntity: Modele::class, inversedBy: 'loueurs')]
+    private Collection $modele;
+
+    public function __construct()
+    {
+        $this->voitures = new ArrayCollection();
+        $this->modele = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +89,60 @@ class Loueur
     public function setAdresse(string $adresse): static
     {
         $this->adresse = $adresse;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Voiture>
+     */
+    public function getVoitures(): Collection
+    {
+        return $this->voitures;
+    }
+
+    public function addVoiture(Voiture $voiture): static
+    {
+        if (!$this->voitures->contains($voiture)) {
+            $this->voitures->add($voiture);
+            $voiture->setLoueur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoiture(Voiture $voiture): static
+    {
+        if ($this->voitures->removeElement($voiture)) {
+            // set the owning side to null (unless already changed)
+            if ($voiture->getLoueur() === $this) {
+                $voiture->setLoueur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, modele>
+     */
+    public function getModele(): Collection
+    {
+        return $this->modele;
+    }
+
+    public function addModele(Modele $modele): static
+    {
+        if (!$this->modele->contains($modele)) {
+            $this->modele->add($modele);
+        }
+
+        return $this;
+    }
+
+    public function removeModele(Modele $modele): static
+    {
+        $this->modele->removeElement($modele);
 
         return $this;
     }

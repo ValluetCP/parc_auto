@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LocationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,6 +24,14 @@ class Location
 
     #[ORM\Column]
     private ?int $prix_location = null;
+
+    #[ORM\ManyToMany(targetEntity: Modele::class, inversedBy: 'locations')]
+    private Collection $modele;
+
+    public function __construct()
+    {
+        $this->modele = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +70,30 @@ class Location
     public function setPrixLocation(int $prix_location): static
     {
         $this->prix_location = $prix_location;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, modele>
+     */
+    public function getModele(): Collection
+    {
+        return $this->modele;
+    }
+
+    public function addModele(Modele $modele): static
+    {
+        if (!$this->modele->contains($modele)) {
+            $this->modele->add($modele);
+        }
+
+        return $this;
+    }
+
+    public function removeModele(Modele $modele): static
+    {
+        $this->modele->removeElement($modele);
 
         return $this;
     }
