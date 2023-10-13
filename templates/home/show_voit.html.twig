@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Détails voiture {% endblock %}
+
+{% block body %}
+<style>
+</style>
+
+<div class="example-wrapper">
+    <h1> Détails voiture en location </h1>
+</div>
+<div class="container">
+    <div class="img-fluid">
+        <img src="{{voiture.image}}" alt="{{ voiture.nom }}">
+    </div>
+    <div class="content">
+        <p class="date">Ecrit le {{ voiture.createdAt | date("d/m/y")  }} à {{ voiture.createdAt | date("H:m") }}</p>
+        <h5 class="title"> {{voiture.nom }}</h5>
+        <p class="content">{{ voiture.nbkm | raw }}</p>
+    </div>  
+</div>
+{% endblock %}

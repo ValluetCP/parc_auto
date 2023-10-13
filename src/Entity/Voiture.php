@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\VoitureRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,8 +28,13 @@ class Voiture
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'voitures')]
-    private ?Loueur $loueur = null;
+    #[ORM\OneToMany(mappedBy: 'voiture', targetEntity: Loueur::class)]
+    private Collection $loueurs;
+
+    public function __construct()
+    {
+        $this->loueurs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -82,14 +89,32 @@ class Voiture
         return $this;
     }
 
-    public function getLoueur(): ?Loueur
+    /**
+     * @return Collection<int, Loueur>
+     */
+    public function getLoueurs(): Collection
     {
-        return $this->loueur;
+        return $this->loueurs;
     }
 
-    public function setLoueur(?Loueur $loueur): static
+    public function addLoueur(Loueur $loueur): static
     {
-        $this->loueur = $loueur;
+        if (!$this->loueurs->contains($loueur)) {
+            $this->loueurs->add($loueur);
+            $loueur->setVoiture($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLoueur(Loueur $loueur): static
+    {
+        if ($this->loueurs->removeElement($loueur)) {
+            // set the owning side to null (unless already changed)
+            if ($loueur->getVoiture() === $this) {
+                $loueur->setVoiture(null);
+            }
+        }
 
         return $this;
     }

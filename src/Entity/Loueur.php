@@ -28,15 +28,14 @@ class Loueur
     #[ORM\Column(type: Types::TEXT)]
     private ?string $adresse = null;
 
-    #[ORM\OneToMany(mappedBy: 'loueur', targetEntity: Voiture::class)]
-    private Collection $voitures;
-
     #[ORM\ManyToMany(targetEntity: Modele::class, inversedBy: 'loueurs')]
     private Collection $modele;
 
+    #[ORM\ManyToOne(inversedBy: 'loueurs')]
+    private ?voiture $voiture = null;
+
     public function __construct()
     {
-        $this->voitures = new ArrayCollection();
         $this->modele = new ArrayCollection();
     }
 
@@ -94,36 +93,6 @@ class Loueur
     }
 
     /**
-     * @return Collection<int, Voiture>
-     */
-    public function getVoitures(): Collection
-    {
-        return $this->voitures;
-    }
-
-    public function addVoiture(Voiture $voiture): static
-    {
-        if (!$this->voitures->contains($voiture)) {
-            $this->voitures->add($voiture);
-            $voiture->setLoueur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVoiture(Voiture $voiture): static
-    {
-        if ($this->voitures->removeElement($voiture)) {
-            // set the owning side to null (unless already changed)
-            if ($voiture->getLoueur() === $this) {
-                $voiture->setLoueur(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, modele>
      */
     public function getModele(): Collection
@@ -143,6 +112,18 @@ class Loueur
     public function removeModele(Modele $modele): static
     {
         $this->modele->removeElement($modele);
+
+        return $this;
+    }
+
+    public function getVoiture(): ?voiture
+    {
+        return $this->voiture;
+    }
+
+    public function setVoiture(?voiture $voiture): static
+    {
+        $this->voiture = $voiture;
 
         return $this;
     }

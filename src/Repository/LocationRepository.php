@@ -24,6 +24,18 @@ class LocationRepository extends ServiceEntityRepository
 //    /**
 //     * @return Location[] Returns an array of Location objects
 //     */
+   public function findLocation(): array
+   {
+       return $this->createQueryBuilder('l')
+           ->andWhere('l.date_location !== null')
+           ->orderBy('l.id', 'ASC')
+           ->setMaxResults(10)
+           ->getQuery()
+           ->getResult()
+       ;
+   }
+
+
 //    public function findByExampleField($value): array
 //    {
 //        return $this->createQueryBuilder('l')
